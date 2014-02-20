@@ -34,7 +34,7 @@ def seg_lin_reg_auto(request_context, series_list, segment_count=10, threshold=N
       segmentCount must be > 2
     """
     for series in series_list:
-        series.name = "segLinReg(%s,%s)" % (series.name, segment_count)
+        series.name = "segLinRegAuto(%s,%s)" % (series.name, segment_count)
         #series.pathExpression = series.name
         s = [(i, value) for i, value in enumerate(series)]
         #logging.info("Source: %s", s)

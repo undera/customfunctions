@@ -43,3 +43,33 @@ def centered_mov_avg(requestContext, seriesList, windowSize):
         result.append(newSeries)
 
     return result
+
+
+def percentileOfSeries(requestContext, *args):
+    levels = []
+    seriesList = []
+    for arg in args:
+        logging.info("Arg: %s", arg)
+        if isinstance(arg, (int, long, float)):
+            levels.append(arg)
+        elif isinstance(arg, basestring):
+            levels += [float(x) for x in arg.split(";")]
+        else:
+            seriesList += arg
+
+    logging.info("Levels: %s", levels)
+    logging.info("Series: %s", seriesList)
+
+    result = []
+    for level in levels:
+        if levels <= 0:
+            raise ValueError('The requested percent is required to be greater than 0')
+
+        name = 'percentilesOfSeries(%s,%g)' % (seriesList[0].pathExpression, level)
+        (start, end, step) = functions.normalize([seriesList])[1:]
+        values = [functions._getPercentile(row, level, False) for row in functions.izip(*seriesList)]
+        resultSeries = TimeSeries(name, start, end, step, values)
+        resultSeries.pathExpression = name
+        result.append(resultSeries)
+
+    return result
